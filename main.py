@@ -186,12 +186,13 @@ page = """
 """
 
 if __name__ == "__main__":
+    config = dotenv_values()
     # Retrieve API key for OpenAI from .env
     try:
-        api_key = dotenv_values()["OPENAI_API_KEY"]
+        api_key = config["OPENAI_API_KEY"]
     except KeyError:
         raise RuntimeError("Please provide the OpenAI API key under .env file as OPENAI_API_KEY=<API_KEY>")
 
     client = openai.Client(api_key=api_key)
 
-    Gui(page).run(debug=True, dark_mode=True, use_reloader=True)
+    Gui(page).run(debug=True, dark_mode=True, use_reloader=True, port=config["TAIPY_GUI_PORT"]) 
