@@ -1,8 +1,8 @@
-import os
-import sys
+import openai
 
 from taipy.gui import Gui, State, notify
-import openai
+from dotenv import dotenv_values
+
 
 client = None
 context = "The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today? "
@@ -132,7 +132,7 @@ def reset_chat(state: State) -> None:
     }
 
 
-def tree_adapter(item: list) -> [str, str]:
+def tree_adapter(item: list) -> tuple[str, str]:
     """
     Converts element of past_conversations to id and displayed string
 
@@ -186,14 +186,11 @@ page = """
 """
 
 if __name__ == "__main__":
-    if "OPENAI_API_KEY" in os.environ:
-        api_key = os.environ["OPENAI_API_KEY"]
-    elif len(sys.argv) > 1:
-        api_key = sys.argv[1]
-    else:
-        raise ValueError(
-            "Please provide the OpenAI API key as an environment variable OPENAI_API_KEY or as a command line argument."
-        )
+    # Retrieve API key for OpenAI from .env
+    try:
+        api_key = dotenv_values()["OPENAI_API_KEY"]
+    except KeyError:
+        raise RuntimeError("Please provide the OpenAI API key under .env file as OPENAI_API_KEY=<API_KEY>")
 
     client = openai.Client(api_key=api_key)
 
